@@ -1399,6 +1399,20 @@
                      }
                  }
 
+                 if (networks[DOM.network.val()].name == "SOL - Solana") {
+                    var purpose = parseIntNoNaN(DOM.bip44purpose.val(), 44);
+                    var coin = parseIntNoNaN(DOM.bip44coin.val(), 0);
+                    var path = `m/${purpose}'/${coin}'/${index}'/0'`;
+                    const { key } = libs.edHd.derivePath(path, seed.toString('hex'));
+                    const keyPair = solanaWeb3.Keypair.fromSeed(key.slice(0, 32));
+
+                    indexText = path;
+
+                    privkey = libs.bs58.encode(libs.buffer.Buffer.from(keyPair.secretKey));
+                    pubkey = keyPair.publicKey.toString();
+                    address = keyPair.publicKey.toString();
+                }
+
                 // ZooBC address format may vary
                 if (networks[DOM.network.val()].name == "ZBC - ZooBlockchain") {
 
@@ -3463,6 +3477,13 @@
                 setHdCoin(59);
             },
         },
+        {
+            name: "SOL - Solana",
+            onSelect: function () {
+              network = libs.bitcoin.networks.bitcoin;
+              setHdCoin(501);
+            },
+          },
         {
             name: "STASH - Stash",
             onSelect: function() {
